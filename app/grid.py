@@ -7,7 +7,7 @@ class Grid:
         self.grid_values = [[' ' for w in range(width)] for h in range(height)]
 
         self.snake = Snake()
-        self.update_snake(first=True)
+        self.update_snake()
 
         self.apple = Apple()
         self.apple.new_position(limits=(self.width-1,self.height-1),
@@ -38,20 +38,16 @@ class Grid:
             #TODO
             pass
 
-    def update_snake(self, first=False) -> None:
-        if first:
-            _w,_h = self.snake.get_head_position()
+    def update_snake(self) -> None:
+        for _h,_w in self.snake.get_all_positions():
             self.grid_values[_h][_w] = self.snake.MARKER
-        else:
-            #TODO
-            pass
 
     def snake_eat_apple(self) -> bool:
         return self.snake.get_head_position() == self.apple.get_position()
     
     def snake_is_out(self) -> bool:
-        #TODO
-        pass
+        _h = self.snake.get_head_position()
+        return (_h[0] < 0) or (_h[1] < 0) or (_h[0] > self.height-1) or (_h[1] > self.width-1)
 
 
 
@@ -68,6 +64,9 @@ class Snake:
 
     def get_head_position(self) -> tuple[int,int]:
         return self.head_position
+    
+    def get_all_positions(self) -> tuple[int,int]:
+        return self.all_positions
     
     def get_length(self) -> int:
         return self.length
@@ -122,7 +121,7 @@ class Apple:
         while not isok:
             _w = random.randint(0,limits[0])
             _h = random.randint(0,limits[1])
-            if not (_h,_w) in exclude:
+            if not (((_h,_w) in exclude) or ((_h,_w) == self.position)):
                 isok = True
         self.position = (_h,_w)
 
