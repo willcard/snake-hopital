@@ -2,9 +2,12 @@ class Grid:
     def __init__(self, width:int =10, height:int =10) -> None:
         self.width = width
         self.height = height
-        self.grid_values = [[0 for w in range(width)] for h in range(height)]
+        self.grid_values = [[' ' for w in range(width)] for h in range(height)]
 
-    def pretty_print(self,) -> None:
+        self.apple = Apple()
+        self.snake = Snake()
+
+    def pretty_print(self,) -> str:
         """
             Tool to return a str view of the grid.
         """
@@ -18,8 +21,19 @@ class Grid:
             pretty += _row + '\n' + _sep
 
         return pretty
+    
+    def update_apple(self, width, height) -> None:
+        pass
 
+
+class Snake:
+    DIRECTIONS = ('UP','DOWN','LEFT','RIGHT')
+    def __init__(self) -> None:
+        self.length = 1
+        self.position = (0,0)
+        self.direction = 'UP'
 
 
 class Apple:
-    pass
+    def __init__(self) -> None:
+        self.position = (2,2)
