@@ -75,36 +75,36 @@ class Snake:
         self.all_positions.append(self.previous_tail_position)
         self.length += 1
     
-    def move_up(self) -> tuple[int,int]:
+    def _move_up(self) -> tuple[int,int]:
         _head = self.head_position
-        _head[0] -= 1
-        return _head
+        return _head[0]-1,_head[1]
     
-    def move_down(self) -> tuple[int,int]:
+    def _move_down(self) -> tuple[int,int]:
         _head = self.head_position
-        _head[0] += 1
-        return _head
+        return _head[0]+1,_head[1]
     
-    def move_left(self) -> tuple[int,int]:
+    def _move_left(self) -> tuple[int,int]:
         _head = self.head_position
         _head[1] -= 1
-        return _head
+        return _head[0],_head[1]-1
     
-    def move_right(self) -> tuple[int,int]:
+    def _move_right(self) -> tuple[int,int]:
         _head = self.head_position
-        _head[1] += 1
-        return _head
+        return _head[0],_head[1]+1
 
     def move(self, direction:str) -> None:
-        if direction == 'UP':
-            _head = self.move_up()
-        if direction == 'DOWN':
-            _head = self.move_down()
-        if direction == 'LEFT':
-            _head = self.move_left()
-        else:
-            _head = self.move_right()
+        assert direction in self.ALLOWED_DIRECTIONS
 
+        if direction == 'UP':
+            _head = self._move_up()
+        elif direction == 'DOWN':
+            _head = self._move_down()
+        elif direction == 'LEFT':
+            _head = self._move_left()
+        else:
+            _head = self._move_right()
+
+        self.head_position = _head
         self.all_positions.insert(0,_head)
         self.previous_tail_position = self.all_positions[-1]
         self.all_positions = self.all_positions[:-1]
