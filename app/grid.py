@@ -33,7 +33,7 @@ class Grid:
     def update_apple(self, first=False) -> None:
         if first:
             _w,_h = self.apple.get_position()
-            self.grid_values[_w][_h] = 'O'
+            self.grid_values[_h][_w] = self.apple.MARKER
         else:
             #TODO
             pass
@@ -41,10 +41,19 @@ class Grid:
     def update_snake(self, first=False) -> None:
         if first:
             _w,_h = self.snake.get_head_position()
-            self.grid_values[_w][_h] = self.snake.MARKER
+            self.grid_values[_h][_w] = self.snake.MARKER
         else:
             #TODO
             pass
+
+    def snake_eat_apple(self) -> bool:
+        return self.snake.get_head_position() == self.apple.get_position()
+    
+    def snake_is_out(self) -> bool:
+        #TODO
+        pass
+
+
 
 
 class Snake:
@@ -52,16 +61,56 @@ class Snake:
     MARKER = '#'
     def __init__(self) -> None:
         self.length = 1
-        self.head_position = (0,0)
-        self.tail_position = self.head_position
         self.direction = 'DOWN'
-
-    def grow_up(self) -> None:
-        pass
+        self.head_position = (0,0)
+        self.previous_tail_position = self.head_position
+        self.all_positions = [self.head_position]
 
     def get_head_position(self) -> tuple[int,int]:
         return self.head_position
     
+    def get_length(self) -> int:
+        return self.length
+    
+    def grow_up(self) -> None: 
+        self.all_positions.append(self.previous_tail_position)
+        self.length += 1
+    
+    def move_up(self) -> tuple[int,int]:
+        _head = self.head_position
+        _head[0] -= 1
+        return _head
+    
+    def move_down(self) -> tuple[int,int]:
+        _head = self.head_position
+        _head[0] += 1
+        return _head
+    
+    def move_left(self) -> tuple[int,int]:
+        _head = self.head_position
+        _head[1] -= 1
+        return _head
+    
+    def move_right(self) -> tuple[int,int]:
+        _head = self.head_position
+        _head[1] += 1
+        return _head
+
+    def move(self, direction:str) -> None:
+        if direction == 'UP':
+            _head = self.move_up()
+        if direction == 'DOWN':
+            _head = self.move_down()
+        if direction == 'LEFT':
+            _head = self.move_left()
+        else:
+            _head = self.move_right()
+
+        self.all_positions.insert(0,_head)
+        self.previous_tail_position = self.all_positions[-1]
+        self.all_positions = self.all_positions[:-1]
+        
+
 
 class Apple:
     MARKER = 'O'
@@ -73,9 +122,9 @@ class Apple:
         while not isok:
             _w = random.randint(0,limits[0])
             _h = random.randint(0,limits[1])
-            if not (_w,_h) in exclude:
+            if not (_h,_w) in exclude:
                 isok = True
-        self.position = (_w,_h)
+        self.position = (_h,_w)
 
     def get_position(self) -> tuple[int,int]:
         return self.position
