@@ -53,7 +53,6 @@ class Snake:
     
     def _move_left(self) -> tuple[int,int]:
         _head = self.head_position
-        _head[1] -= 1
         return _head[0],_head[1]-1
     
     def _move_right(self) -> tuple[int,int]:
