@@ -13,6 +13,9 @@ class Game:
         print(self.grid.pretty_print())
 
     def start(self) -> None:
+        """
+            Main game loop: get pressed key and update game.
+        """
         last_event = 'DOWN'
         game_is_ok = True
         while game_is_ok:

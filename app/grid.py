@@ -29,6 +29,10 @@ class Grid:
         return pretty
 
     def snake_move(self, move:str) -> bool:
+        """
+            Apply changes and do checkups. 
+            Return game status.
+        """
         self.snake.move(move)
         if self.snake_is_out() or self.snake_eat_himself():
             return False
@@ -40,6 +44,9 @@ class Grid:
         return True
 
     def _update_values(self) -> None:
+        """
+            Update 2D array values based on components positions.
+        """
         # reset
         self.grid_values = [[' ' for w in range(self.width)] for h in range(self.height)]
 
@@ -52,13 +59,22 @@ class Grid:
             self.grid_values[_h][_w] = self.snake.MARKER
 
     def snake_eat_apple(self) -> bool:
+        """
+            Check if snake's head is on apple.
+        """
         return self.snake.get_head_position() == self.apple.get_position()
     
     def snake_is_out(self) -> bool:
+        """
+            Check if snake's head is out of the grid.
+        """
         _h = self.snake.get_head_position()
         return (_h[0] < 0) or (_h[1] < 0) or (_h[0] > self.height-1) or (_h[1] > self.width-1)
     
     def snake_eat_himself(self) -> bool:
+        """
+            Check if snake's head touch snake's body.
+        """
         _h = self.snake.get_head_position()
         _body = self.snake.get_all_positions()[1:]
         return _h in _body
