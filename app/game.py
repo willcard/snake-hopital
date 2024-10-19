@@ -13,19 +13,19 @@ class Game:
         print(self.grid.pretty_print())
 
     def start(self) -> None:
+        last_event = 'DOWN'
         while True:
-            LAST_EVENT = 'DOWN'
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        LAST_EVENT = 'UP'
+                        last_event = 'UP'
                     elif event.key == pygame.K_DOWN:
-                        LAST_EVENT = 'DOWN'
+                        last_event = 'DOWN'
                     elif event.key == pygame.K_LEFT:
-                        LAST_EVENT = 'LEFT'
+                        last_event = 'LEFT'
                     elif event.key == pygame.K_RIGHT:
-                        LAST_EVENT = 'RIGHT'
+                        last_event = 'RIGHT'
             
-            self.grid.snake_move(LAST_EVENT)
+            self.grid.snake_move(last_event)
             print(self.grid.pretty_print())
             time.sleep(self.speed)
