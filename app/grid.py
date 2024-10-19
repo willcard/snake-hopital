@@ -7,12 +7,11 @@ class Grid:
         self.grid_values = [[' ' for w in range(width)] for h in range(height)]
 
         self.snake = Snake()
-        self.update_snake()
-
         self.apple = Apple()
         self.apple.new_position(limits=(self.width-1,self.height-1),
                                         exclude= [self.snake.get_head_position()])
-        self.update_apple(first=True)
+        
+        self.update()
 
 
     def pretty_print(self,) -> str:
@@ -29,16 +28,18 @@ class Grid:
             pretty += _row + '\n' + _sep
 
         return pretty
-    
-    def update_apple(self, first=False) -> None:
-        if first:
-            _w,_h = self.apple.get_position()
-            self.grid_values[_h][_w] = self.apple.MARKER
-        else:
-            #TODO
-            pass
 
-    def update_snake(self) -> None:
+
+
+    def update(self) -> None:
+        # reset
+        self.grid_values = [[' ' for w in range(self.width)] for h in range(self.height)]
+
+        # add apple
+        _w,_h = self.apple.get_position()
+        self.grid_values[_h][_w] = self.apple.MARKER
+
+        # add snake
         for _h,_w in self.snake.get_all_positions():
             self.grid_values[_h][_w] = self.snake.MARKER
 

@@ -7,5 +7,11 @@ class Game:
 
     def run(self) -> None:
         print(self.grid.pretty_print())
-        self.grid.snake.move('UP')
-        print(self.grid.snake_is_out())
+
+        self.grid.snake.move('DOWN')
+        self.grid.update()
+        print(self.grid.pretty_print())
+
+        self.grid.snake.move('DOWN')
+        self.grid.update()
+        print(self.grid.pretty_print())
