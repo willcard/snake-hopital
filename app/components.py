@@ -2,14 +2,15 @@ import random
 
 class Apple:
     MARKER = 'O'
-    def __init__(self) -> None:
+    def __init__(self, limits:tuple[int,int]) -> None:
         self.position = (1,1)
+        self.limits = limits
 
-    def new_position(self, limits:tuple[int,int], exclude=list[tuple[int,int]]) -> None:
+    def new_position(self, exclude=list[tuple[int,int]]) -> None:
         isok = False
         while not isok:
-            _w = random.randint(0,limits[0])
-            _h = random.randint(0,limits[1])
+            _h = random.randint(0,self.limits[0])
+            _w = random.randint(0,self.limits[1])
             if not (((_h,_w) in exclude) or ((_h,_w) == self.position)):
                 isok = True
         self.position = (_h,_w)

@@ -1,15 +1,14 @@
 from components import Snake, Apple
 
 class Grid:
-    def __init__(self, width:int =10, height:int =10) -> None:
-        self.width = width
+    def __init__(self, height:int =10, width:int =10) -> None:
         self.height = height
+        self.width = width
         self.grid_values = [[' ' for w in range(width)] for h in range(height)]
 
         self.snake = Snake()
-        self.apple = Apple()
-        self.apple.new_position(limits=(self.width-1,self.height-1),
-                                        exclude= [self.snake.get_head_position()])
+        self.apple = Apple(limits=(self.height-1,self.width-1))
+        self.apple.new_position(exclude= [self.snake.get_head_position()])
         
         self._update_values()
 
@@ -31,6 +30,11 @@ class Grid:
 
     def snake_move(self, move:str):
         self.snake.move(move)
+        assert not self.snake_is_out()
+
+        if self.snake_eat_apple():
+            self.snake.grow_up()
+            self.apple.new_position()
         self._update_values()
 
 
