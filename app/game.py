@@ -14,7 +14,8 @@ class Game:
 
     def start(self) -> None:
         last_event = 'DOWN'
-        while True:
+        game_is_ok = True
+        while game_is_ok:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
@@ -26,6 +27,6 @@ class Game:
                     elif event.key == pygame.K_RIGHT:
                         last_event = 'RIGHT'
             
-            self.grid.snake_move(last_event)
+            game_is_ok = self.grid.snake_move(last_event)
             print(self.grid.pretty_print())
             time.sleep(self.speed)

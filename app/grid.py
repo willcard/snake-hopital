@@ -28,14 +28,16 @@ class Grid:
 
         return pretty
 
-    def snake_move(self, move:str):
+    def snake_move(self, move:str) -> bool:
         self.snake.move(move)
-        assert not self.snake_is_out()
+        if self.snake_is_out() or self.snake_eat_himself():
+            return False
 
         if self.snake_eat_apple():
             self.snake.grow_up()
             self.apple.new_position(exclude=self.snake.get_all_positions())
         self._update_values()
+        return True
 
     def _update_values(self) -> None:
         # reset
@@ -55,4 +57,9 @@ class Grid:
     def snake_is_out(self) -> bool:
         _h = self.snake.get_head_position()
         return (_h[0] < 0) or (_h[1] < 0) or (_h[0] > self.height-1) or (_h[1] > self.width-1)
+    
+    def snake_eat_himself(self) -> bool:
+        _h = self.snake.get_head_position()
+        _body = self.snake.get_all_positions()[1:]
+        return _h in _body
 
