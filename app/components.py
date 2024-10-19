@@ -33,7 +33,7 @@ class Snake:
     def get_head_position(self) -> tuple[int,int]:
         return self.head_position
     
-    def get_all_positions(self) -> tuple[int,int]:
+    def get_all_positions(self) -> list[tuple[int,int]]:
         return self.all_positions
     
     def get_length(self) -> int:

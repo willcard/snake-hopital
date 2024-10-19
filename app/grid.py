@@ -34,9 +34,8 @@ class Grid:
 
         if self.snake_eat_apple():
             self.snake.grow_up()
-            self.apple.new_position()
+            self.apple.new_position(exclude=self.snake.get_all_positions())
         self._update_values()
-
 
     def _update_values(self) -> None:
         # reset
