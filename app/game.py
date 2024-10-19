@@ -8,20 +8,24 @@ class Game:
         self.screen = pygame.display.set_mode((400, 300))
         pygame.init()
 
+        self.speed = conf.SPEED
         self.grid = Grid(*conf.GRID_SHAPE)
         print(self.grid.pretty_print())
 
     def start(self) -> None:
         while True:
+            LAST_EVENT = 'DOWN'
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        self.grid.snake_move('UP')
+                        LAST_EVENT = 'UP'
                     elif event.key == pygame.K_DOWN:
-                        self.grid.snake_move('DOWN')
+                        LAST_EVENT = 'DOWN'
                     elif event.key == pygame.K_LEFT:
-                        self.grid.snake_move('LEFT')
+                        LAST_EVENT = 'LEFT'
                     elif event.key == pygame.K_RIGHT:
-                        self.grid.snake_move('RIGHT')
-                    print(self.grid.pretty_print())
-                    #time.sleep(0.5)
+                        LAST_EVENT = 'RIGHT'
+            
+            self.grid.snake_move(LAST_EVENT)
+            print(self.grid.pretty_print())
+            time.sleep(self.speed)
