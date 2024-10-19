@@ -7,6 +7,7 @@ class Game:
         print(self.grid.pretty_print())
 
     def run(self, move) -> None:
-        self.grid.snake.move(move)
-        self.grid.update()
+        self.grid.snake_move(move)
+        if self.grid.snake_eat_apple():
+            print('< apple touched >')
         print(self.grid.pretty_print())

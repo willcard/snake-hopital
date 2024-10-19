@@ -11,7 +11,7 @@ class Grid:
         self.apple.new_position(limits=(self.width-1,self.height-1),
                                         exclude= [self.snake.get_head_position()])
         
-        self.update()
+        self._update_values()
 
 
     def pretty_print(self,) -> str:
@@ -29,14 +29,17 @@ class Grid:
 
         return pretty
 
+    def snake_move(self, move:str):
+        self.snake.move(move)
+        self._update_values()
 
 
-    def update(self) -> None:
+    def _update_values(self) -> None:
         # reset
         self.grid_values = [[' ' for w in range(self.width)] for h in range(self.height)]
 
         # add apple
-        _w,_h = self.apple.get_position()
+        _h,_w = self.apple.get_position()
         self.grid_values[_h][_w] = self.apple.MARKER
 
         # add snake
