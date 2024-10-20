@@ -78,4 +78,10 @@ class Grid:
         _h = self.snake.get_head_position()
         _body = self.snake.get_all_positions()[1:]
         return _h in _body
+    
+    def get_grid_values(self) -> list[list[str]]:
+        """
+            Return grid values.
+        """
+        return self.grid_values
 
