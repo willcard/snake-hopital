@@ -5,11 +5,16 @@ import time
 import logging
 
 class Game:
+    TITLE = 'Snake Hopital'
+    TEXT_COLOR = (255, 255, 255)
     LINE_COLOR = (125, 125, 125)
     BG_COLOR = (0, 0, 0)
     SNAKE_COLOR = (83, 157, 85)
     APPLE_COLOR = (255, 0, 0)
+
+    FONT_SIZE = 36
     CELL_WIDTH = 30
+    STATS_PADDING_HEIGHT = 50
 
     INITIAL_SPEED = 1
 
@@ -24,7 +29,10 @@ class Game:
         self.screen_width = self.n_rows*self.CELL_WIDTH
         self.screen_height = self.n_cols*self.CELL_WIDTH
         self.screen = pygame.display.set_mode((self.screen_width,
-                                               self.screen_height))
+                                               self.screen_height + self.STATS_PADDING_HEIGHT))
+        
+        self.font = pygame.font.SysFont(None, self.FONT_SIZE)
+        pygame.display.set_caption(self.TITLE)
 
         self.speed = self.INITIAL_SPEED
         self.grid = Grid(self.n_rows, self.n_cols)
@@ -87,12 +95,27 @@ class Game:
                                  (col * self.CELL_WIDTH, 
                                   row * self.CELL_WIDTH, self.CELL_WIDTH, self.CELL_WIDTH), 1)
 
+    def write_infos(self) -> None:
+        """
+            Write infos on screen.
+        """
+        infos = f"Score: {self.stats['Score']}"
+        text = self.font.render(infos, True, self.TEXT_COLOR)
+
+        text_rect = text.get_rect(centerx=self.screen.get_width() // 2)
+        text_rect.y = self.screen.get_height() - text_rect.height - 10 
+
+        self.screen.blit(text, text_rect)
+
+
     def update_screen(self) -> None:
         """
             Update screen for each step.
         """
         self.screen.fill(self.BG_COLOR)
         self.draw_grid()
+        self.write_infos()
+
         pygame.display.flip()
 
     def update_speed(self) -> None:
@@ -103,7 +126,7 @@ class Game:
         coef = length//2 +1
         new_speed = self.INITIAL_SPEED - (coef*0.1)
 
-        if new_speed > 0:
+        if new_speed > 0.2:
             self.speed = new_speed
 
     def update_stats(self) -> None:
@@ -112,7 +135,6 @@ class Game:
         """
         self.stats = {'Score':self.grid.snake.get_length(),
                       'Speed':round(self.speed,1)}
-
 
     def log_stats(self) -> None:
         """
