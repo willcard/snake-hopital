@@ -1,2 +1,2 @@
 GRID_SHAPE = (15,15)
-SPEED = 0.5 #higher is slower
+INITIAL_SPEED = 1 #higher is slower

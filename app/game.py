@@ -10,6 +10,8 @@ class Game:
     APPLE_COLOR = (255, 0, 0)
     CELL_WIDTH = 30
 
+    INITIAL_SPEED = 1
+
     def __init__(self) -> None:
         pygame.init()
 
@@ -21,7 +23,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.screen_width,
                                                self.screen_height))
 
-        self.speed = conf.SPEED
+        self.speed = self.INITIAL_SPEED
         self.grid = Grid(self.n_rows, self.n_cols)
 
 
@@ -49,6 +51,7 @@ class Game:
             
             #print(self.grid.pretty_print())
             self.update_screen()
+            self.update_speed()
 
             time.sleep(self.speed)
 
@@ -76,3 +79,14 @@ class Game:
         self.screen.fill(self.BG_COLOR)
         self.draw_grid()
         pygame.display.flip()
+
+    def update_speed(self) -> None:
+        """
+            Update speed based on snake's length.
+        """
+        length = self.grid.snake.get_length()
+        coef = length//2 +1
+        new_speed = self.INITIAL_SPEED - (coef*0.1)
+
+        if new_speed > 0:
+            self.speed = new_speed
