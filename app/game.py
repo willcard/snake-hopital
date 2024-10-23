@@ -2,6 +2,7 @@ import conf
 from grid import Grid
 import pygame
 import time
+import logging
 
 class Game:
     LINE_COLOR = (125, 125, 125)
@@ -11,6 +12,8 @@ class Game:
     CELL_WIDTH = 30
 
     INITIAL_SPEED = 1
+
+    LOG_LEVEL = logging.DEBUG
 
     def __init__(self) -> None:
         pygame.init()
@@ -26,16 +29,24 @@ class Game:
         self.speed = self.INITIAL_SPEED
         self.grid = Grid(self.n_rows, self.n_cols)
 
+        self.stats = dict()
+        self.update_stats()
+        
+        self.logger = logging.getLogger()
+        self.logger.setLevel(self.LOG_LEVEL)
+        self.logger.addHandler(logging.StreamHandler())
+
 
     def start(self) -> None:
         """
             Main game loop: get pressed key and update game.
         """
-        #print(self.grid.pretty_print())
 
         last_event = 'DOWN'
         game_is_ok = True
         while game_is_ok:
+            self.log_stats()
+
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
@@ -49,9 +60,9 @@ class Game:
             
             game_is_ok = self.grid.snake_move(last_event)
             
-            #print(self.grid.pretty_print())
             self.update_screen()
             self.update_speed()
+            self.update_stats()
 
             time.sleep(self.speed)
 
@@ -69,8 +80,12 @@ class Game:
                     color = self.APPLE_COLOR
                 else:
                     color = self.BG_COLOR
-                pygame.draw.rect(self.screen, color, (col * self.CELL_WIDTH, row * self.CELL_WIDTH, self.CELL_WIDTH, self.CELL_WIDTH))
-                pygame.draw.rect(self.screen, self.LINE_COLOR, (col * self.CELL_WIDTH, row * self.CELL_WIDTH, self.CELL_WIDTH, self.CELL_WIDTH), 1)
+                pygame.draw.rect(self.screen, color, 
+                                 (col * self.CELL_WIDTH, 
+                                  row * self.CELL_WIDTH, self.CELL_WIDTH, self.CELL_WIDTH))
+                pygame.draw.rect(self.screen, self.LINE_COLOR, 
+                                 (col * self.CELL_WIDTH, 
+                                  row * self.CELL_WIDTH, self.CELL_WIDTH, self.CELL_WIDTH), 1)
 
     def update_screen(self) -> None:
         """
@@ -90,3 +105,21 @@ class Game:
 
         if new_speed > 0:
             self.speed = new_speed
+
+    def update_stats(self) -> None:
+        """
+            Update games' stats for each step.
+        """
+        self.stats = {'Score':self.grid.snake.get_length(),
+                      'Speed':round(self.speed,1)}
+
+
+    def log_stats(self) -> None:
+        """
+            Log games stats and grid view in terminal.
+        """
+        pretty_stats = " | ".join([f"{s} : {v}" for s,v in self.stats.items()])
+        pretty_grid = self.grid.pretty_print()
+
+        self.logger.info(pretty_stats)
+        self.logger.info(pretty_grid)
