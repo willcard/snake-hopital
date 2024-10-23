@@ -22,11 +22,15 @@ class Game:
 
     INITIAL_SPEED = 1
 
-    DEFAULT_MEMORY = {'BEST_SCORE': 1}
+    DEFAULT_MEMORY = {'BEST_SCORE':0,'LAST_SCORE':0}
 
-    LOG_LEVEL = logging.DEBUG
+    LOG_LEVEL = logging.INFO
 
     def __init__(self) -> None:
+        self.logger = logging.getLogger()
+        self.logger.setLevel(self.LOG_LEVEL)
+        self.logger.addHandler(logging.StreamHandler())
+
         pygame.init()
 
         self.n_rows = conf.GRID_SHAPE[0]
@@ -46,19 +50,14 @@ class Game:
         self.stats = dict()
         self.update_stats()
 
-        self.memory = dict()
         self.memory_path = conf.MEMORY_PATH
-        
-        self.logger = logging.getLogger()
-        self.logger.setLevel(self.LOG_LEVEL)
-        self.logger.addHandler(logging.StreamHandler())
+        self.memory = self.get_or_create_memory()
 
 
     def start(self) -> None:
         """
             Main game loop: get pressed key and update game.
         """
-
         last_event = 'DOWN'
         game_is_ok = True
         while game_is_ok:
@@ -82,6 +81,8 @@ class Game:
             self.update_stats()
 
             time.sleep(self.speed)
+
+        self.end()
 
     def draw_grid(self) -> None:
         """
@@ -108,7 +109,9 @@ class Game:
         """
             Write infos on screen.
         """
-        infos = f"Score: {self.stats['Score']}"
+        infos = f"Score: {self.stats['Score']}    "
+        infos += f"Best: {self.memory['BEST_SCORE']}    "
+        infos += f"Last: {self.memory['LAST_SCORE']}"
         text = self.font.render(infos, True, self.TEXT_COLOR)
 
         text_rect = text.get_rect(centerx=self.screen.get_width() // 2)
@@ -153,7 +156,7 @@ class Game:
         pretty_grid = self.grid.pretty_print()
 
         self.logger.info(pretty_stats)
-        self.logger.info(pretty_grid)
+        self.logger.debug(pretty_grid)
 
     def get_or_create_memory(self) -> dict:
         """
@@ -168,5 +171,25 @@ class Game:
             with open(self.memory_path, 'r') as file:
                 memory = yaml.safe_load(file)
             self.logger.info(f"Memory '{self.memory_path}' loaded.")
-        
+
+        assert self.DEFAULT_MEMORY.keys() == memory.keys()
+
         return memory
+    
+    def update_memory(self) -> None:
+        """
+            Update memory with new values.
+        """
+        if self.stats['Score'] > self.memory['BEST_SCORE']:
+            self.memory['BEST_SCORE'] = self.stats['Score']
+        self.memory['LAST_SCORE'] = self.stats['Score']
+
+        with open(self.memory_path, 'w') as file:
+            yaml.safe_dump(self.memory,file)
+            self.logger.info(f"Memory '{self.memory_path}' updated.")
+
+    def end(self):
+        """
+            End of the game.
+        """
+        self.update_memory()
