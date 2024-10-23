@@ -1,8 +1,12 @@
 import conf
 from grid import Grid
+
 import pygame
-import time
+
 import logging
+import os, yaml
+import time
+
 
 class Game:
     TITLE = 'Snake Hopital'
@@ -17,6 +21,8 @@ class Game:
     STATS_PADDING_HEIGHT = 50
 
     INITIAL_SPEED = 1
+
+    DEFAULT_MEMORY = {'BEST_SCORE': 1}
 
     LOG_LEVEL = logging.DEBUG
 
@@ -39,6 +45,9 @@ class Game:
 
         self.stats = dict()
         self.update_stats()
+
+        self.memory = dict()
+        self.memory_path = conf.MEMORY_PATH
         
         self.logger = logging.getLogger()
         self.logger.setLevel(self.LOG_LEVEL)
@@ -145,3 +154,19 @@ class Game:
 
         self.logger.info(pretty_stats)
         self.logger.info(pretty_grid)
+
+    def get_or_create_memory(self) -> dict:
+        """
+            Create or load game memory.
+        """
+        if not os.path.exists(self.memory_path):
+            with open(self.memory_path, 'w') as file:
+                file.write('')
+            self.logger.info(f"Memory '{self.memory_path}' not found.\nCreated.")
+            memory = self.DEFAULT_MEMORY
+        else:
+            with open(self.memory_path, 'r') as file:
+                memory = yaml.safe_load(file)
+            self.logger.info(f"Memory '{self.memory_path}' loaded.")
+        
+        return memory
